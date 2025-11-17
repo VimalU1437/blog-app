@@ -3,7 +3,7 @@
  import React from "react";
 
  interface LogoutButtonProps {
-  formSubmit?: Function | null;
+  formSubmit?: (() => void) | null;
  }
 
  const LogoutButton: React.FC<LogoutButtonProps> = ({ formSubmit }) => {

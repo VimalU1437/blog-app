@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react';
-import { TextField, InputAdornment } from '@mui/material';
+import { Input } from '@/components/ui/input';
 import { BsSearch } from 'react-icons/bs';
 
 const SearchBar: React.FC = () => {
@@ -17,22 +17,15 @@ const SearchBar: React.FC = () => {
   };
 
   return (
-    <TextField
-      value={query}
-      onChange={handleChange}
-      placeholder="Search..."
-      variant="standard"
-      slotProps={{
-        input: {
-          className: 'text-white',
-          startAdornment: (
-            <InputAdornment position="start">
-              <BsSearch />
-            </InputAdornment>
-          ),
-        },
-      }}
-    />
+    <div className="relative">
+      <BsSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      <Input
+        value={query}
+        onChange={handleChange}
+        placeholder="Search..."
+        className="pl-10 text-white"
+      />
+    </div>
   );
 };
 

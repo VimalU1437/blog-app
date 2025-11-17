@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -10,15 +10,15 @@ interface ButtonData {
 
 interface BaseAuthButtonProps {
   button: ButtonData;
-  formSubmit?: Function | null;
-  variant?: "text" | "outlined" | "contained";
+  formSubmit?: (() => void) | null;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   className?: string;
 }
 
 const BaseAuthButton: React.FC<BaseAuthButtonProps> = ({
   button,
   formSubmit = null,
-  variant = "contained",
+  variant = "default",
   className,
 }) => {
   const { text, route } = button;

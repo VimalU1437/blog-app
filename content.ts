@@ -11,3 +11,13 @@ export const SIGNUP_BUTTON = {
     text: 'Sign up',
     route: '/signup'
 }
+
+export const NEW_POST = {
+    text: 'New post',
+    route: '/newpost'
+}
+
+export const MY_POST = {
+    text: 'My post',
+    route: '/mypost'
+}

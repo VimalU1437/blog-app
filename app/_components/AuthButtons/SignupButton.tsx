@@ -3,7 +3,7 @@ import BaseAuthButton from "./BaseAuthButton";
 import React from "react";
 
 interface SignupButtonProps {
-  formSubmit?: Function | null;
+  formSubmit?: (() => void) | null;
 }
 
 const SignupButton: React.FC<SignupButtonProps> = ({ formSubmit }) => {
