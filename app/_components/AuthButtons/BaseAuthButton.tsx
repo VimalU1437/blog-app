@@ -26,6 +26,7 @@ const BaseAuthButton: React.FC<BaseAuthButtonProps> = ({
 
   return (
     <Button
+      type={formSubmit ? "button" : "submit"}
       onClick={() => {
         if (formSubmit) {
           formSubmit();

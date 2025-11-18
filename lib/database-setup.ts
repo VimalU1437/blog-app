@@ -1,39 +1,20 @@
-import sql from './db';
+import { db } from './db';
+import { users } from './schema';
+import { eq } from 'drizzle-orm';
+import type { UserRole } from './types';
 
-/**
- * Create users table
- * Run this once to set up your database schema
- */
-export async function createTables() {
-  try {
-    await sql`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(50) UNIQUE NOT NULL,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        role VARCHAR(20) DEFAULT 'user',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
-    console.log('Users table created successfully');
-  } catch (error) {
-    console.error('Error creating tables:', error);
-  }
-}
 
 /**
  * Create a new user
  */
-export async function createUser(username: string, email: string, password: string, role: string = 'user') {
+export async function createUser(username: string, email: string, password: string, role: UserRole = 'user') {
   try {
-    const result = await sql`
-      INSERT INTO users (username, email, password, role)
-      VALUES (${username}, ${email}, ${password}, ${role})
-      RETURNING id
-    `;
+    const result = await db.insert(users).values({
+      username,
+      email,
+      password,
+      role,
+    }).returning({ id: users.id });
 
     return result[0].id;
   } catch (error) {
@@ -47,13 +28,8 @@ export async function createUser(username: string, email: string, password: stri
  */
 export async function getUserByEmail(email: string) {
   try {
-    const users = await sql`
-      SELECT id, username, email, password, role, created_at, updated_at
-      FROM users
-      WHERE email = ${email}
-    `;
-
-    return users[0];
+    const result = await db.select().from(users).where(eq(users.email, email));
+    return result[0];
   } catch (error) {
     console.error('Error fetching user:', error);
     throw error;
@@ -65,13 +41,8 @@ export async function getUserByEmail(email: string) {
  */
 export async function getUserByUsername(username: string) {
   try {
-    const users = await sql`
-      SELECT id, username, email, password, role, created_at, updated_at
-      FROM users
-      WHERE username = ${username}
-    `;
-
-    return users[0];
+    const result = await db.select().from(users).where(eq(users.username, username));
+    return result[0];
   } catch (error) {
     console.error('Error fetching user:', error);
     throw error;
@@ -83,13 +54,16 @@ export async function getUserByUsername(username: string) {
  */
 export async function getAllUsers() {
   try {
-    const users = await sql`
-      SELECT id, username, email, role, created_at, updated_at
-      FROM users
-      ORDER BY created_at DESC
-    `;
+    const result = await db.select({
+      id: users.id,
+      username: users.username,
+      email: users.email,
+      role: users.role,
+      created_at: users.created_at,
+      updated_at: users.updated_at,
+    }).from(users).orderBy(users.created_at);
 
-    return users;
+    return result;
   } catch (error) {
     console.error('Error fetching users:', error);
     throw error;
@@ -101,11 +75,9 @@ export async function getAllUsers() {
  */
 export async function updateUserPassword(id: number, newPassword: string) {
   try {
-    await sql`
-      UPDATE users
-      SET password = ${newPassword}, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id}
-    `;
+    await db.update(users)
+      .set({ password: newPassword, updated_at: new Date() })
+      .where(eq(users.id, id));
 
     return true;
   } catch (error) {
@@ -117,13 +89,11 @@ export async function updateUserPassword(id: number, newPassword: string) {
 /**
  * Update user role
  */
-export async function updateUserRole(id: number, newRole: string) {
+export async function updateUserRole(id: number, newRole: UserRole) {
   try {
-    await sql`
-      UPDATE users
-      SET role = ${newRole}, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ${id}
-    `;
+    await db.update(users)
+      .set({ role: newRole, updated_at: new Date() })
+      .where(eq(users.id, id));
 
     return true;
   } catch (error) {

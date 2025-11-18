@@ -1,14 +1,16 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import type { UserRole } from './types';
+import { DEFAULT_JWT_SECRET, DEFAULT_JWT_EXPIRES_IN, BEARER_PREFIX, BCRYPT_SALT_ROUNDS } from './constants';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || DEFAULT_JWT_EXPIRES_IN;
 
 /**
  * Hash a password
  */
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
+  return bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
 }
 
 /**
@@ -21,9 +23,9 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 /**
  * Generate a JWT token
  */
-export function generateToken(payload: { id: number; email: string; role: string }): string {
-  const secret = JWT_SECRET || 'your-secret-key';
-  const expiresIn = JWT_EXPIRES_IN || '7d';
+export function generateToken(payload: { id: number; email: string; role: UserRole }): string {
+  const secret = JWT_SECRET;
+  const expiresIn = JWT_EXPIRES_IN;
 
   return jwt.sign(payload, secret, {
     expiresIn,
@@ -35,8 +37,8 @@ export function generateToken(payload: { id: number; email: string; role: string
  */
 export function verifyToken(token: string) {
   try {
-    const secret = JWT_SECRET || 'your-secret-key';
-    return jwt.verify(token, secret) as { id: number; email: string; role: string; iat: number; exp: number };
+    const secret = JWT_SECRET;
+    return jwt.verify(token, secret) as { id: number; email: string; role: UserRole; iat: number; exp: number };
   } catch {
     return null;
   }
@@ -46,8 +48,8 @@ export function verifyToken(token: string) {
  * Extract token from Authorization header
  */
 export function extractToken(authHeader: string | null): string | null {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith(BEARER_PREFIX)) {
     return null;
   }
-  return authHeader.substring(7);
+  return authHeader.substring(BEARER_PREFIX.length);
 }
