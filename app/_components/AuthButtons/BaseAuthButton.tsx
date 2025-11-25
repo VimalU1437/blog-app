@@ -35,7 +35,7 @@ const BaseAuthButton: React.FC<BaseAuthButtonProps> = ({
         }
       }}
       variant={variant}
-      className={className}
+      className={`${className} py-5 px-6`}
     >
       {text}
     </Button>

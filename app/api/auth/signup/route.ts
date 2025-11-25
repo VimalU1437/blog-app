@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createUser, getUserByEmail } from '@/lib/database-setup';
+import { createUser, getUserByEmail } from '@/lib/database-methods';
 import { hashPassword } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {

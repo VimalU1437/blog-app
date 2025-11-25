@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <header className="flex items-center justify-between px-4">
       <LogoHeading />
-      <div className="flex gap-4">
+      <div className="flex gap-4 items-center">
         <SearchBar />
         <SignupButton />
         <LoginButton />
